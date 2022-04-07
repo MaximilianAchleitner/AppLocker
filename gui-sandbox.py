@@ -1,33 +1,55 @@
-import sys
 from tkinter import *
+from tkinter.filedialog import askopenfilename
 
-def salir():
-    login_frame.destroy()
-    home_frame = home()
-    home_frame.pack(fill="both", expand=True)
+class Root(Tk):
+    def init(self):
+        super(Root, self).init()
 
-def login():
-    frame = Frame(root)
-    Label(frame, text = "Bienvenido a Matricula UTEC").grid(row = 0)
-    Label(frame, text = "Ingrese sus nombres: ").grid(row = 1)
-    Label(frame, text = "Ingrese sus apellidos: ").grid(row = 2)
-    e1 = Entry(frame)
-    e2 = Entry(frame)
-    e1.grid(row=1, column = 1)
-    e2.grid(row=2, column = 1)
-    Button(frame, text = 'Salir', command = salir).grid(row = 4, column = 0, sticky = W, pady = 4)
-    Button(frame, text = 'Comenzar', command = salir).grid(row = 4, column = 1, sticky = W, pady = 4)
-    return frame
+        self.title("AppLocker GUI")
+        self.minsize(1080, 720)
 
-def home():
-    frame = Frame(root)
-    Label(frame, text="Welcome").pack()
-    return frame
 
-root = Tk()
-root.wm_title('Matricula UTEC')
+def onClick():
+    result = "You Wrote: " + txtf.get()
+    lbl.configure(text=result)
 
-login_frame = login()
-login_frame.pack(fill="both", expand=True)
+
+def onNew():
+    print("Hi")
+
+
+def browse():
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    filenameLabel = Label(root, text=filename)
+    filenameLabel.grid(column=1, row=2)
+
+
+root = Root()
+
+#1. Create Image --> 2. Label with image as parameter --> label.grid(col, row)
+img = PhotoImage(file="D:\Schule\ITP\swoleGams1.png")
+imgLabel = Label(root, image=img)
+imgLabel.grid(column=3, row=0)
+
+menu = Menu(root)
+item = Menu(menu)
+item.add_command(label="New", command=onNew)
+item.add_command(label="Print")
+menu.add_cascade(label="File", menu=item)
+menu.add_cascade(label="Menu")
+root.config(menu=menu)
+
+fileBtn = Button(root, text="Browse", command=browse)
+fileBtn.grid(column=4, row=0)
+
+lbl = Label(root, text="Hello World")
+lbl.grid()
+
+btn = Button(root, text="Click", fg="red", command=onClick)
+btn.grid(column=2, row=0)
+
+txtf = Entry(root, width=10)
+txtf.grid(column=1, row=0)
 
 root.mainloop()
