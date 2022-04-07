@@ -11,20 +11,20 @@ class Root(Tk):
 
 
 def openRemoveProgram(currentFrame):
-    currentFrame.destroy()
-    frame = Frame(root)
-    Label(frame, text="New Window REMOVE").grid()
-    currentFrame = frame
+    clearFrame(currentFrame)
+    Label(currentFrame, text="New Window REMOVE").grid()
     currentFrame.pack(fill="both", expand=TRUE)
 
 
 def openAddProgram(currentFrame):
-    currentFrame.destroy()
-    frame = Frame(root)
-    Label(frame, text="New Window addProgram").grid()
-    currentFrame = frame
+    clearFrame(currentFrame)
+    Label(currentFrame, text="New Window addProgram").grid()
     currentFrame.pack(fill="both", expand=TRUE)
 
+
+def clearFrame(frame):
+    for widgets in frame.winfo_children():
+        widgets.destroy()
 
 def dashboard():
     frame = Frame(root)
