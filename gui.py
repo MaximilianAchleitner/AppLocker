@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
+from functools import partial
 
 class Root(Tk):
     def __init__(self):
@@ -9,10 +10,26 @@ class Root(Tk):
         self.minsize(1080, 720)
 
 
-def onClick():
-    result = "You Wrote: " + txtf.get()
-    lbl.configure(text=result)
+def openRemoveProgram(currentFrame):
+    currentFrame.destroy()
+    frame = Frame(root)
+    Label(frame, text="New Window REMOVE").grid()
+    currentFrame = frame
+    currentFrame.pack(fill="both", expand=TRUE)
 
+
+def openAddProgram(currentFrame):
+    currentFrame.destroy()
+    frame = Frame(root)
+    Label(frame, text="New Window addProgram").grid()
+    currentFrame = frame
+    currentFrame.pack(fill="both", expand=TRUE)
+
+
+def dashboard():
+    frame = Frame(root)
+    Label(frame, text="Welcome to AppLocker").grid()
+    return frame
 
 def onNew():
     print("Hi")
@@ -25,32 +42,24 @@ def browse():
     filenameLabel.grid(column=1, row=2)
 
 
+def setEmail():
+    print("hi")
+
+
+# START OF PROGRAM
 root = Root()
 
-#1. Create Image --> 2. Label with image as parameter --> label.grid(col, row)
-img = PhotoImage(file="D:\Schule\ITP\swoleGams1.png")
-imgLabel = Label(root, image=img)
-imgLabel.grid(column=3, row=0)
+dashboardFrame = dashboard()
+dashboardFrame.pack(fill="both", expand=TRUE)
 
 menu = Menu(root)
-item = Menu(menu)
-item.add_command(label="New", command=onNew)
-item.add_command(label="Print")
-menu.add_cascade(label="File", menu=item)
-menu.add_cascade(label="Menu")
+editDropdown = Menu(menu)
+editDropdown.add_command(label="Add", command=partial(openAddProgram, dashboardFrame))
+editDropdown.add_command(label="Remove", command=partial(openRemoveProgram, dashboardFrame))
+editDropdown.add_command(label="Edit")
+menu.add_cascade(label="Menu", menu=editDropdown)
+menu.add_command(label="Settings", command=setEmail)
 root.config(menu=menu)
-
-fileBtn = Button(root, text="Browse", command=browse)
-fileBtn.grid(column=4, row=0)
-
-lbl = Label(root, text="Hello World")
-lbl.grid()
-
-btn = Button(root, text="Click", fg="red", command=onClick)
-btn.grid(column=2, row=0)
-
-txtf = Entry(root, width=10)
-txtf.grid(column=1, row=0)
 
 root.mainloop()
 
