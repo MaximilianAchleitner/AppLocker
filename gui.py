@@ -31,9 +31,6 @@ def dashboard():
     Label(frame, text="Welcome to AppLocker").grid()
     return frame
 
-def onNew():
-    print("Hi")
-
 
 def browse():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
@@ -62,6 +59,3 @@ menu.add_command(label="Settings", command=setEmail)
 root.config(menu=menu)
 
 root.mainloop()
-
-
-
