@@ -42,8 +42,23 @@ def browse():
     filenameLabel.grid(column=1, row=2)
 
 
-def setEmail():
-    print("hi")
+def btnSubmit(txtEmail, txtSecu, txtShut):
+    print(txtEmail)
+
+
+def openSettings(currentFrame):
+    clearFrame(currentFrame)
+    Label(currentFrame, text="Settings").grid()
+    Label(currentFrame, text="Email:").grid(row=1)
+    Label(currentFrame, text="Number of failed Tries to send Security-Email:").grid(row=2)
+    Label(currentFrame, text="Number of failed Tries to Shut-Down:").grid(row=3)
+
+    txtEmail = Entry(currentFrame, width=10).grid(row=1,column=1)
+    txtSecu = Entry(currentFrame, width=3).grid(row=2,column=1)
+    txtShut = Entry(currentFrame, width=3).grid(row=3,column=1)
+
+    btn = Button(currentFrame, text="Click", fg="red", command=partial(btnSubmit, txtEmail, txtSecu, txtShut)).grid(column=1, row=4)
+    currentFrame.pack(fill="both", expand=TRUE)
 
 
 # START OF PROGRAM
@@ -59,7 +74,7 @@ editDropdown.add_command(label="Remove", command=partial(openRemoveProgram, dash
 editDropdown.add_command(label="Edit")
 menu.add_command(label="Dashboard", command=partial(dashboard, dashboardFrame))
 menu.add_cascade(label="Menu", menu=editDropdown)
-menu.add_command(label="Settings", command=setEmail)
+menu.add_command(label="Settings", command=partial(openSettings, dashboardFrame))
 
 root.config(menu=menu)
 
