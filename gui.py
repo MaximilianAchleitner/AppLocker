@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from functools import partial
-from os import *
 
 class Root(Tk):
     def __init__(self):
@@ -12,16 +11,50 @@ class Root(Tk):
 
 
 def openRemoveProgram(currentFrame):
+    # create list of programs to display
+    file = open("data.cnf", "r")
+    lines = file.readlines()
+    dataList = []
+    names = []
+
+    # list is now multidimensional array
+    for line in lines:
+        tmp = line.split(";")
+        dataList.append(tmp)
+        names.append(tmp[0])
+
+    print(names)
     clearFrame(currentFrame)
-    Label(currentFrame, text="New Window REMOVE").grid()
+    Label(currentFrame, text="Remove a program from your security list!").grid()
+    Label(currentFrame, text="Choose Program: ").grid(column=0, row=1, sticky=W)
+    listView = StringVar(currentFrame)
+    listView.set(names[0])
+    OptionMenu(currentFrame, listView, *names).grid(column=1, row=1)
+
     currentFrame.pack(fill="both", expand=TRUE)
 
 
 def openAddProgram(currentFrame):
     clearFrame(currentFrame)
-    Label(currentFrame, text="Program Name: ").grid()
-
+    Label(currentFrame, text="Add a program to your security list!")
+    Label(currentFrame, text="Program Name: ").grid(column=0, row=1, sticky=W)
+    Entry(currentFrame, width=10).grid(column=1, row=1)
+    Label(currentFrame, text="Password: ").grid(column=0, row=2, sticky=W)
+    Entry(currentFrame, show="*", width=10).grid(column=1, row=2)
+    Label(currentFrame, text="Find .exe: ").grid(column=0, row=3, sticky=W)
+    Button(currentFrame, text="Browse", command=findEXE).grid(column=1, row=3, sticky=W)
+    Button(currentFrame, text="Submit", command=submitNewProgram).grid(column=0, row=4, sticky=W)
     currentFrame.pack(fill="both", expand=TRUE)
+
+
+def findEXE():
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    print(filename)
+
+
+def submitNewProgram():
+    print("hello")
+
 
 
 def clearFrame(frame):
