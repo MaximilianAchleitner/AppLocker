@@ -1,3 +1,4 @@
+import os.path
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from functools import partial
@@ -135,16 +136,21 @@ def openSettings(currentFrame):
         writer.writerow([stringEmail, stringSecu, stringShut])
         file.close()
 
-    file = open("settings.cnf", "r")
-    line = file.readline()
-    settings = line.split(",")
-    email = StringVar()
-    email.set(settings[0])
-    secu = StringVar()
-    secu.set(settings[1])
-    shut = StringVar()
-    shut.set(settings[2])
-    file.close()
+    if os.path.exists("settings.cnf"):
+        file = open("settings.cnf", "r")
+        line = file.readline()
+        settings = line.split(",")
+        email = StringVar()
+        email.set(settings[0])
+        secu = StringVar()
+        secu.set(settings[1])
+        shut = StringVar()
+        shut.set(settings[2])
+        file.close()
+    else:
+        email = StringVar()
+        secu = StringVar()
+        shut = StringVar()
 
     clearFrame(currentFrame)
     Label(currentFrame, text="Settings").grid()
