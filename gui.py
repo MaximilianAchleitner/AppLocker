@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from functools import partial
+import csv
 
 class Root(Tk):
     def __init__(self):
@@ -124,22 +125,39 @@ def browse():
     filenameLabel.grid(column=1, row=2)
 
 
-def btnSubmit(txtEmail, txtSecu, txtShut):
-    print(txtEmail)
-
-
 def openSettings(currentFrame):
+    def getEntry():
+        stringEmail = txtEmail.get()
+        stringSecu = txtSecu.get()
+        stringShut = txtShut.get()
+        file = open("settings.cnf", "w")
+        writer = csv.writer(file)
+        writer.writerow([stringEmail, stringSecu, stringShut])
+        file.close()
+
+    file = open("settings.cnf", "r")
+    line = file.readline()
+    settings = line.split(",")
+    email = StringVar()
+    email.set(settings[0])
+    secu = StringVar()
+    secu.set(settings[1])
+    shut = StringVar()
+    shut.set(settings[2])
+    file.close()
+
     clearFrame(currentFrame)
     Label(currentFrame, text="Settings").grid()
     Label(currentFrame, text="Email:").grid(row=1)
     Label(currentFrame, text="Number of failed Tries to send Security-Email:").grid(row=2)
     Label(currentFrame, text="Number of failed Tries to Shut-Down:").grid(row=3)
-
-    txtEmail = Entry(currentFrame, width=10).grid(row=1,column=1)
-    txtSecu = Entry(currentFrame, width=3).grid(row=2,column=1)
-    txtShut = Entry(currentFrame, width=3).grid(row=3,column=1)
-
-    btn = Button(currentFrame, text="Click", fg="red", command=partial(btnSubmit, txtEmail, txtSecu, txtShut)).grid(column=1, row=4)
+    txtEmail = Entry(currentFrame, text=email, width=30)
+    txtSecu = Entry(currentFrame, text=secu, width=3)
+    txtShut = Entry(currentFrame, text=shut, width=3)
+    txtEmail.grid(row=1, column=1)
+    txtSecu.grid(row=2, column=1)
+    txtShut.grid(row=3, column=1)
+    Button(currentFrame, text="Save", command=getEntry).grid(column=1, row=4)
     currentFrame.pack(fill="both", expand=TRUE)
 
 
