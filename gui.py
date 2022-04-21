@@ -34,6 +34,52 @@ def openRemoveProgram(currentFrame):
     currentFrame.pack(fill="both", expand=TRUE)
 
 
+def openEditProgram(currentFrame):
+    clearFrame(currentFrame)
+    file = open("data.cnf", "r")
+    lines = file.readlines()
+    dataList = []
+    names = []
+    programName = StringVar()
+    programPath = StringVar()
+    programPassword = StringVar()
+
+    # dataList is now multidimensional array
+    for line in lines:
+        tmp = line.split(";")
+        dataList.append(tmp)
+        names.append(tmp[0])
+
+    print(names)
+
+    Label(currentFrame, text="Program: ").grid(sticky=W)
+    listView = StringVar(currentFrame)
+    listView.set(names[0])
+    OptionMenu(currentFrame, listView, *names, command=partial(updateEditVariables, dataList=dataList, thisName=programName, path=programPath,
+                                                               password=programPassword, choice=listView)).grid(column=1, row=0)
+    Label(currentFrame, text="Name: ").grid(column=0, row=1, sticky=W)
+    Entry(currentFrame, width=10, text=programName).grid(column=1, row=1)
+    Label(currentFrame, text="Path: ").grid(column=0, row=2, sticky=W)
+    Entry(currentFrame, width=10, text=programPath).grid(column=1, row=2)
+    Label(currentFrame, text="Password: ").grid(column=0, row=3, sticky=W)
+    Entry(currentFrame, show="*", width=10, text=programPassword).grid(column=1, row=3)
+
+    Button(currentFrame, text="Submit", command=updateProgram).grid(column=0, row=4, sticky=W)
+
+    currentFrame.pack(fill="both", expand=TRUE)
+
+
+def updateEditVariables(self, dataList, thisName=StringVar, path=StringVar, password=StringVar, choice=StringVar):
+    print(choice.get())
+    thisName.set(choice.get())
+
+    for entry in dataList:
+        if entry[0] == thisName.get():
+            path.set(value=entry[1])
+            password.set(value=entry[2])
+            break
+
+
 def openAddProgram(currentFrame):
     clearFrame(currentFrame)
     Label(currentFrame, text="Add a program to your security list!")
@@ -55,6 +101,9 @@ def findEXE():
 def submitNewProgram():
     print("hello")
 
+
+def updateProgram():
+    pass
 
 
 def clearFrame(frame):
@@ -104,7 +153,7 @@ menu = Menu(root)
 editDropdown = Menu(menu)
 editDropdown.add_command(label="Add", command=partial(openAddProgram, dashboardFrame))
 editDropdown.add_command(label="Remove", command=partial(openRemoveProgram, dashboardFrame))
-editDropdown.add_command(label="Edit")
+editDropdown.add_command(label="Edit", command=partial(openEditProgram, dashboardFrame))
 menu.add_command(label="Dashboard", command=partial(dashboard, dashboardFrame))
 menu.add_cascade(label="Menu", menu=editDropdown)
 menu.add_command(label="Settings", command=partial(openSettings, dashboardFrame))
