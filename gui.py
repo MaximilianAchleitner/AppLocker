@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 from functools import partial
+import os
 
 class Root(Tk):
     def __init__(self):
@@ -77,29 +78,45 @@ def updateEditVariables(self, dataList, thisName=StringVar, path=StringVar, pass
         if entry[0] == thisName.get():
             path.set(value=entry[1])
             password.set(value=entry[2])
-            break
+            return
 
 
 def openAddProgram(currentFrame):
+    isExe = bool
+    programPath = StringVar()
+    programName = StringVar()
+    programPassword = StringVar()
+
     clearFrame(currentFrame)
     Label(currentFrame, text="Add a program to your security list!")
     Label(currentFrame, text="Program Name: ").grid(column=0, row=1, sticky=W)
-    Entry(currentFrame, width=10).grid(column=1, row=1)
+    Entry(currentFrame, width=10, text=programName).grid(column=1, row=1)
     Label(currentFrame, text="Password: ").grid(column=0, row=2, sticky=W)
-    Entry(currentFrame, show="*", width=10).grid(column=1, row=2)
+    Entry(currentFrame, show="*", width=10, text=programPassword).grid(column=1, row=2)
     Label(currentFrame, text="Find .exe: ").grid(column=0, row=3, sticky=W)
-    Button(currentFrame, text="Browse", command=findEXE).grid(column=1, row=3, sticky=W)
-    Button(currentFrame, text="Submit", command=submitNewProgram).grid(column=0, row=4, sticky=W)
+    Button(currentFrame, text="Browse", command=partial(findEXE, isExe=isExe, path=programPath)).grid(column=1, row=3, sticky=W)
+    Button(currentFrame, text="Submit", command=partial(submitNewProgram, pName=programName, pPath=programPath, pPassword=programPassword, isExe=isExe)).grid(column=0, row=4, sticky=W)
     currentFrame.pack(fill="both", expand=TRUE)
 
 
-def findEXE():
+def findEXE(isExe, path):
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
-    print(filename)
+    rootPath, ext = os.path.splitext(filename)
+    if ext == ".exe":
+        isExe = True
+        path.set(filename)
+        print(path.get())
+    else:
+        isExe = False
 
 
-def submitNewProgram():
-    print("hello")
+def submitNewProgram(pName, pPath, pPassword, isExe):
+    if isExe:
+        print(pPath)
+        confLine = "\n" + pName.get() + ";" + pPath.get() + ";" + pPassword.get()
+        confFile = open("data.cnf", "a")
+        confFile.writelines(confLine)
+    print("done")
 
 
 def updateProgram():
