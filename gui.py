@@ -32,6 +32,7 @@ def openRemoveProgram(currentFrame):
     listView = StringVar(currentFrame)
     listView.set(names[0])
     OptionMenu(currentFrame, listView, *names).grid(column=1, row=1)
+    Button(currentFrame, text="Confirm", command=partial(removeProgram, originalName=listView, currentFrame=currentFrame)).grid(column=0, row=2)
 
     currentFrame.pack(fill="both", expand=TRUE)
 
@@ -46,6 +47,10 @@ def openEditProgram(currentFrame):
     programPath = StringVar()
     programPassword = StringVar()
 
+    isExe = bool
+
+    originalName = StringVar()
+
     # dataList is now multidimensional array
     for line in lines:
         tmp = line.split(";")
@@ -58,22 +63,25 @@ def openEditProgram(currentFrame):
     listView = StringVar(currentFrame)
     listView.set(names[0])
     OptionMenu(currentFrame, listView, *names, command=partial(updateEditVariables, dataList=dataList, thisName=programName, path=programPath,
-                                                               password=programPassword, choice=listView)).grid(column=1, row=0)
+                                                               password=programPassword, choice=listView, originalName=originalName)).grid(column=1, row=0)
     Label(currentFrame, text="Name: ").grid(column=0, row=1, sticky=W)
     Entry(currentFrame, width=10, text=programName).grid(column=1, row=1)
     Label(currentFrame, text="Path: ").grid(column=0, row=2, sticky=W)
     Entry(currentFrame, width=10, text=programPath).grid(column=1, row=2)
+    Button(currentFrame, text="Browse", command=partial(findEXE, path=programPath, isExe=isExe)).grid(column=2, row=2)
     Label(currentFrame, text="Password: ").grid(column=0, row=3, sticky=W)
     Entry(currentFrame, show="*", width=10, text=programPassword).grid(column=1, row=3)
 
-    Button(currentFrame, text="Submit", command=updateProgram).grid(column=0, row=4, sticky=W)
+    Button(currentFrame, text="Submit", command=partial(updateProgram, currentFrame=currentFrame, pName=programName, pPath=programPath, pPassword=programPassword, isExe=isExe, originalName=originalName)).grid(column=0, row=4, sticky=W)
 
     currentFrame.pack(fill="both", expand=TRUE)
 
 
-def updateEditVariables(self, dataList, thisName=StringVar, path=StringVar, password=StringVar, choice=StringVar):
+def updateEditVariables(self, dataList, thisName=StringVar, path=StringVar, password=StringVar, choice=StringVar, originalName=StringVar):
     print(choice.get())
     thisName.set(choice.get())
+    originalName.set(thisName.get())
+
 
     for entry in dataList:
         if entry[0] == thisName.get():
@@ -96,7 +104,7 @@ def openAddProgram(currentFrame):
     Entry(currentFrame, show="*", width=10, text=programPassword).grid(column=1, row=2)
     Label(currentFrame, text="Find .exe: ").grid(column=0, row=3, sticky=W)
     Button(currentFrame, text="Browse", command=partial(findEXE, isExe=isExe, path=programPath)).grid(column=1, row=3, sticky=W)
-    Button(currentFrame, text="Submit", command=partial(submitNewProgram, pName=programName, pPath=programPath, pPassword=programPassword, isExe=isExe)).grid(column=0, row=4, sticky=W)
+    Button(currentFrame, text="Submit", command=partial(submitNewProgram, update=False, pName=programName, pPath=programPath, pPassword=programPassword, isExe=isExe, currentFrame=currentFrame)).grid(column=0, row=4, sticky=W)
     currentFrame.pack(fill="both", expand=TRUE)
 
 
@@ -111,17 +119,37 @@ def findEXE(isExe, path):
         isExe = False
 
 
-def submitNewProgram(pName, pPath, pPassword, isExe):
+def submitNewProgram(pName, pPath, pPassword, isExe, currentFrame, update):
     if isExe:
         print(pPath)
-        confLine = "\n" + pName.get() + ";" + pPath.get() + ";" + pPassword.get()
+        if update:
+            confLine = pName.get() + ";" + pPath.get() + ";" + pPassword.get()
+        else:
+            confLine = pName.get() + ";" + pPath.get() + ";" + pPassword.get() + "\n"
         confFile = open("data.cnf", "a")
         confFile.writelines(confLine)
     print("done")
+    openAddProgram(currentFrame)
 
 
-def updateProgram():
-    pass
+def updateProgram(pName, pPath, pPassword, isExe, originalName, currentFrame):
+    removeProgram(originalName=originalName, currentFrame=currentFrame)
+    submitNewProgram(pName=pName, pPath=pPath, pPassword=pPassword, isExe=isExe, currentFrame=currentFrame, update=True)
+
+
+def removeProgram(originalName, currentFrame):
+    try:
+        with open("data.cnf", "r") as fr:
+            lines = fr.readlines()
+
+            with open("data.cnf", "w") as fw:
+                for line in lines:
+                    if line.find(originalName.get()) == -1:
+                        fw.write(line)
+        print("Deleted")
+        openRemoveProgram(currentFrame)
+    except:
+        print("Oops! something error")
 
 
 def clearFrame(frame):
