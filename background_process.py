@@ -1,5 +1,5 @@
 import psutil
-
+import wmi
 
 
 def initialize(data, settings, boolArr):
@@ -16,8 +16,13 @@ def initialize(data, settings, boolArr):
         settings = settingsFile.readline().split(",")
 
 
-def displayOverlay():
+def displayOverlay(app):
     print("Yes")
+    try:
+        app.kill()
+    except:
+        print("Already closed!")
+
     pass
 
 
@@ -25,6 +30,7 @@ def displayOverlay():
 data = []
 settings = []
 boolArr = []
+f = wmi.WMI()
 
 # code
 initialize(data=data, settings=settings, boolArr=boolArr)
@@ -35,9 +41,10 @@ while(True):
     i = 0
     for arr in data:
         # if the exe is running and it hasnt been open before
-        if arr[0] in (it.name() for it in psutil.process_iter()) and not boolArr[i]:
-            boolArr[i] = True
-            displayOverlay()
+        for proc in psutil.process_iter():
+            if arr[0] == proc.name():
+                boolArr[i] = True
+                displayOverlay(proc)
         else:
             print("no")
         i += 1
