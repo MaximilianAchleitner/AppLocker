@@ -214,7 +214,6 @@ def openSettings(currentFrame):
     Button(currentFrame, text="Save", command=getEntry).grid(column=1, row=4)
     currentFrame.pack(fill="both", expand=TRUE)
 
-
 # START OF PROGRAM
 root = Root()
 
