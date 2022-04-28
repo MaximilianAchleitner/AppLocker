@@ -105,23 +105,20 @@ def openAddProgram(currentFrame):
     Label(currentFrame, text="Password: ").grid(column=0, row=2, sticky=W)
     Entry(currentFrame, show="*", width=10, text=programPassword).grid(column=1, row=2)
     Label(currentFrame, text="Find .exe: ").grid(column=0, row=3, sticky=W)
-    Button(currentFrame, text="Browse", command=partial(findEXE, isExe=isExe, path=programPath, displayName=displayName)).grid(column=1, row=3, sticky=W)
+    Button(currentFrame, text="Browse", command=partial(findEXE, isExe=isExe, path=programPath)).grid(column=1, row=3, sticky=W)
     Label(currentFrame, text=displayName).grid(column=2, row=3, sticky=W)
     Button(currentFrame, text="Submit", command=partial(submitNewProgram, update=False, pName=programName, pPath=programPath, pPassword=programPassword, isExe=isExe, currentFrame=currentFrame)).grid(column=0, row=4, sticky=W)
     currentFrame.pack(fill="both", expand=TRUE)
 
 
-def findEXE(isExe, path, displayName):
+def findEXE(isExe, path):
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
     rootPath, ext = os.path.splitext(filename)
     if ext == ".exe":
         isExe = True
-        path.set(filename)
-        sections = path.get().split("/")
-        displayName.set(sections[len(sections)-1])
+        sections = filename.split("/")
+        path.set(sections[len(sections)-1])
         print(path.get())
-        print(displayName.get())
-
     else:
         isExe = False
 
