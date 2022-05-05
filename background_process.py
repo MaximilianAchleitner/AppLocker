@@ -3,6 +3,7 @@ from functools import partial
 import psutil
 import wmi
 from tkinter import *
+from emailSend import createEmail
 
 class Root(Tk):
     def __init__(self):
@@ -23,23 +24,25 @@ def initialize(data, settings, boolArr):
         boolArr.append(False)
 
     with open("settings.cnf", "r") as settingsFile:
-        settings = settingsFile.readline().split(",")
+        line = settingsFile.readline()
+        settings = line.split(",")
 
-
-def checkValidity(program, pwd, notice, tries, conf):
-    ppwd = data[i].split(";")[2]
+def checkValidity(program, pwd, notice, tries):
+    ppwd = data[i][1]
+    ppwd.strip("\n")
+    print(settings)
     tries.set(tries.get() + 1)
     print(tries.get())
     if pwd == ppwd:
         #close window and continue to app
         pass
     else:
-        if tries.get() == conf[1]:
+        if tries.get() == settings[1]:
             #sendEmail
-            pass
-        if tries.get() == conf[2]-1:
+            createEmail()
+        if tries.get() == settings[2]-1:
             notice.grid(row=1)
-        if tries.get() == conf[2]:
+        if tries.get() == settings[2]:
             #close program
 
             #shutdown
@@ -47,7 +50,7 @@ def checkValidity(program, pwd, notice, tries, conf):
 
 
 
-def displayOverlay(app, settings, data, iterator):
+def displayOverlay(app, data, iterator):
     root = Root()
     overlayFrame = Frame()
     enteredPwd = StringVar()
@@ -59,7 +62,7 @@ def displayOverlay(app, settings, data, iterator):
     notice = Label(overlayFrame, text="One try left before shutdown!", fg="red")
     notice.grid(row=1)
     notice.grid_forget()
-    Button(overlayFrame, text="Submit", command=partial(checkValidity, program=app, pwd=enteredPwd, notice=notice, tries=numOfTries, conf=settings, strLine = data[iterator])).grid(row=2)
+    Button(overlayFrame, text="Submit", command=partial(checkValidity, program=app, pwd=enteredPwd, notice=notice, tries=numOfTries)).grid(row=2)
 
     overlayFrame.pack()
     root.mainloop()
@@ -89,7 +92,7 @@ while(True):
         for proc in psutil.process_iter():
             if arr[0] == proc.name():
                 boolArr[i] = True
-                displayOverlay(proc, settings, data, i)
+                displayOverlay(proc, data, i)
         else:
             print("no")
         i += 1
