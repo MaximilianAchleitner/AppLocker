@@ -39,7 +39,7 @@ def checkValidity(program, pwd, notice, tries):
     else:
         if tries.get() == settings[1]:
             #sendEmail
-            createEmail()
+            createEmail(settings[1])
         if tries.get() == settings[2]-1:
             notice.grid(row=1)
         if tries.get() == settings[2]:
