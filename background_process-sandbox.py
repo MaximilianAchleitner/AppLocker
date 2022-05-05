@@ -1,7 +1,7 @@
 import os
 import smtplib, ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from emailSend.mime.text import MIMEText
+from emailSend.mime.multipart import MIMEMultipart
 
 port = 465  # For SSL
 password = "kPiCzcZJzd5sx8p"
@@ -54,8 +54,5 @@ with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
     # TODO: Send email here
     server.sendmail(sender_email, receiver_email, message.as_string())
     print("Email sent")
-
-
-os.system("shutdown /s /t 1")
 
 
