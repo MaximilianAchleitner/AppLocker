@@ -4,6 +4,7 @@ import psutil
 import wmi
 from tkinter import *
 from emailSend import createEmail
+import os
 
 class Root(Tk):
     def __init__(self):
@@ -25,7 +26,9 @@ def initialize(data, settings, boolArr):
 
     with open("settings.cnf", "r") as settingsFile:
         line = settingsFile.readline()
-        settings = line.split(",")
+        for e in line.split(","):
+            settings.append(e)
+        settings[2].strip("\n")
 
 def checkValidity(program, pwd, notice, tries):
     ppwd = data[i][1]
@@ -37,16 +40,18 @@ def checkValidity(program, pwd, notice, tries):
         #close window and continue to app
         pass
     else:
-        if tries.get() == settings[1]:
-            #sendEmail
-            createEmail(settings[1])
-        if tries.get() == settings[2]-1:
+        if tries.get() == int(settings[1]):
+            createEmail()
+        if tries.get() == int(settings[2])-1:
             notice.grid(row=1)
-        if tries.get() == settings[2]:
+        if tries.get() == int(settings[2]):
             #close program
-
+            try:
+                program.kill()
+            except:
+                print("Already closed!")
             #shutdown
-            pass
+            os.system("shutdown /s /t 1")
 
 
 
@@ -67,11 +72,6 @@ def displayOverlay(app, data, iterator):
     overlayFrame.pack()
     root.mainloop()
     print("Yes")
-    """
-    try:
-        app.kill()
-    except:
-        print("Already closed!")"""
 
 
 # variables
