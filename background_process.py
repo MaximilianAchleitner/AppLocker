@@ -47,19 +47,21 @@ def checkValidity(program, pwd, notice, tries, root, i):
             notice.grid(row=1)
         if tries.get() == int(settings[2]):
             #close program
-            try:
-                program.kill()
-            except:
-                print("Already closed!")
+            killPrograms(program)
             #shutdown
             os.system("shutdown /s /t 1")
 
 
-def onMinimize(root):
-    # root.state(newstate='normal')
-    root.protocol()
-    print("Hi")
+def killPrograms(app):
+    try:
+        app.kill()
+    except:
+        print("Already closed!")
 
+
+def cancelOverlay(root, app):
+    killPrograms(app)
+    root.destroy()
 
 def displayOverlay(app, data, iterator):
     root = Root()
@@ -74,6 +76,7 @@ def displayOverlay(app, data, iterator):
     notice.grid(row=1)
     notice.grid_forget()
     Button(overlayFrame, text="Submit", command=partial(checkValidity, program=app, pwd=enteredPwd, notice=notice, tries=numOfTries, root=root, i=iterator)).grid(row=2)
+    Button(overlayFrame, text="Cancel", command=partial(cancelOverlay, root=root, app=app)).grid(row=2, column=1)
 
     overlayFrame.pack()
     root.wm_attributes("-topmost", 1)
