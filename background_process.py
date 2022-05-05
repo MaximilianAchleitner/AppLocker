@@ -54,10 +54,14 @@ def checkValidity(program, pwd, notice, tries, root, i):
 
 def killPrograms(app):
     try:
-        app.kill()
+        while True:
+            for proc in psutil.process_iter():
+                if app.parent().name() == app.name():
+                    app.parent().kill()
+                else:
+                    app.kill()
     except:
         print("Already closed!")
-
 
 def cancelOverlay(root, app):
     killPrograms(app)
