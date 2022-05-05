@@ -2,12 +2,12 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def createEmail():
+def createEmail(selectedEmail):
     port = 465  # For SSL
     password = "kPiCzcZJzd5sx8p"
 
     sender_email = "applockernoreply@gmail.com"
-    receiver_email = "bretbacher.elijah@gmail.com"
+    receiver_email = selectedEmail
 
     message = MIMEMultipart("alternative")
     message["Subject"] = "multipart test"
@@ -16,18 +16,17 @@ def createEmail():
 
     # Create the plain-text and HTML version of your message
     text = """\
-    Hi,
-    How are you?
-    Real Python has many great tutorials:
-    www.realpython.com"""
+    Hey,
+    Someone is trying to log into one of your Programs.
+    Maybe check your Computer.
+    """
 
     html = """\
     <html>
       <body>
-        <p>Hi,<br>
-           How are you?<br>
-           <a href="http://www.realpython.com">Real Python</a> 
-           has many great tutorials.
+        <p Hey,<br>
+           Someone is trying to log into one of your Programs.<br>
+           Maybe check your Computer.<br>
         </p>
       </body>
     </html>
