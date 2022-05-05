@@ -30,15 +30,16 @@ def initialize(data, settings, boolArr):
             settings.append(e)
         settings[2].strip("\n")
 
-def checkValidity(program, pwd, notice, tries):
+def checkValidity(program, pwd, notice, tries, root, i):
     ppwd = data[i][1]
-    ppwd.strip("\n")
-    print(settings)
+    ppwd = ppwd.strip("\n")
+    print(ppwd)
+    print(pwd.get())
     tries.set(tries.get() + 1)
-    print(tries.get())
-    if pwd == ppwd:
+    if pwd.get() == ppwd:
         #close window and continue to app
-        pass
+        root.destroy()
+        boolArr[i] = True
     else:
         if tries.get() == int(settings[1]):
             createEmail()
@@ -54,6 +55,11 @@ def checkValidity(program, pwd, notice, tries):
             os.system("shutdown /s /t 1")
 
 
+def onMinimize(root):
+    # root.state(newstate='normal')
+    root.protocol()
+    print("Hi")
+
 
 def displayOverlay(app, data, iterator):
     root = Root()
@@ -67,9 +73,12 @@ def displayOverlay(app, data, iterator):
     notice = Label(overlayFrame, text="One try left before shutdown!", fg="red")
     notice.grid(row=1)
     notice.grid_forget()
-    Button(overlayFrame, text="Submit", command=partial(checkValidity, program=app, pwd=enteredPwd, notice=notice, tries=numOfTries)).grid(row=2)
+    Button(overlayFrame, text="Submit", command=partial(checkValidity, program=app, pwd=enteredPwd, notice=notice, tries=numOfTries, root=root, i=iterator)).grid(row=2)
 
     overlayFrame.pack()
+    root.wm_attributes("-topmost", 1)
+    root.wm_attributes("-fullscreen", True)
+    root.overrideredirect(1)
     root.mainloop()
     print("Yes")
 
@@ -90,8 +99,7 @@ while(True):
     for arr in data:
         # if the exe is running and it hasnt been open before
         for proc in psutil.process_iter():
-            if arr[0] == proc.name():
-                boolArr[i] = True
+            if arr[0] == proc.name() and not boolArr[i]:
                 displayOverlay(proc, data, i)
         else:
             print("no")
